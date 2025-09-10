@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Bootstrap CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Todo List</h1>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" id="newTodo" value="프로젝트 구상하기" placeholder="새 할일 입력하세요">
+            <div class="input-group-append">
+                <button class="btn btn-success" id="saveBtn">SAVE</button>
+            </div>
+        </div>
+        <hr>
+        <div id="todoListBox"></div>
+    </div>  
+    <script>
+        // 과제 2)
+        // 새 파일에 구현 하기
+        // 배열의 요소 내요을 표로 만드는 자바스크립트 구현.
+        var todoList = [
+            {no:1, title:"청소하기", done:false}, 
+            {no:2, title:"공부하기", done:false}, 
+            {no:3, title:"빨래하기", done:true}, 
+            {no:4, title:"밥하기", done:false}
+        ]
+        var count = 5;
+        // forEach() 또는 for문, map() ...
+        // div 영역에 innerHTML을 이용해서 표 목록 만들기
+
+        function deleteFn(self) {
+            console.dir(self.dataset["no"]);
+            console.log("deleteFn 호출...");
+        }
+
+        function drawList() {
+            var html = "<table border='1'  class='table table-dark table-hover'>";
+            todoList.forEach((todo) => {
+                html += `<tr>
+                            <td>${todo['no']}</td>
+                            <td>${todo['title']}</td>
+                            <td>${todo['done']}</td>
+                            <td><button data-no="${todo['no']}" onclick="deleteFn(this)">DELETE</button></td>
+                        </tr>`;
+            });
+            html += "</table>"
+            //console.log(html);
+            document.getElementById("todoListBox").innerHTML = html;
+        }
+        // 최초에 목록 그리기.
+        drawList();
+        
+
+        var newTodoInput = document.querySelector("#newTodo");
+
+        // 기능 추가:
+        // 저장버튼을 누르면 (이벤트 핸들러)
+        document.querySelector('#saveBtn').onclick = function(e) {
+            // console.log("저장 버튼 눌렀다.");
+            // input의 newTodo을 읽어와서 todoList 배열에 push한다.
+            todoList.push({no:++count, title:newTodoInput.value, done:false});
+            // 입력 후 input의 value를 지운다.
+            newTodoInput.value = "";
+            newTodoInput.focus();
+
+            // 목록을 다시 그린다.
+            drawList();
+        }
+
+    </script>
+</body>
+</html>

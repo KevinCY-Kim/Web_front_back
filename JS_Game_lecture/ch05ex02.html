@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Event Handling Example</title>
+</head>
+<body>
+  <button id="myButton">Click Me</button>
+  <p id="message"></p>
+
+  <script>
+    // 버튼 클릭 이벤트 핸들링 함수
+    function handleClick() {
+      const messageElement = document.getElementById("message");
+      messageElement.textContent = "Button clicked!";
+    }
+
+    // 이벤트 리스너를 사용한 이벤트 핸들링
+    const buttonElement = document.getElementById("myButton");
+    buttonElement.addEventListener("click", handleClick);
+  </script>
+</body>
+</html>
+

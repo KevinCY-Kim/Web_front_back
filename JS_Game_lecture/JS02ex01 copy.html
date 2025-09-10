@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>★ 짝 맞추기 게임 ★</title>
+    <style>
+        .clicked {
+            background-color: yellowgreen; /* 짝 맞을 떄 유지 */
+            }
+        .selected {
+            background-color: white; /* 임시 선택 상태 */
+                }
+        table { 
+            width: 400px;
+            height: 400px;
+        }
+        td {
+            width: 100px;
+            height: 100px;
+            border: 1px solid gray;
+            background-color: skyblue;
+        }
+    </style>
+</head>
+<body>
+    <h1>★ 짝 맞추기 게임 ★</h1>
+    <button id="startBtn">게임 시작</button>
+    <p>⏱️경과 시간: <span id="timer">60</span>초</p>
+    <table>
+        <tr onclick="this.classList.toggle('clicked')">
+            <td data-ch=""><center>???</center></td>
+            <td data-ch=""><center>???</center></td>
+            <td data-ch=""><center>???</center></td>
+            <td data-ch=""><center>???</center></td>
+        </tr>
+        <tr onclick="this.classList.toggle('clicked')">
+            <td data-ch=""><center>???</center></td>
+            <td data-ch=""><center>???</center></td>
+            <td data-ch=""><center>???</center></td>
+            <td data-ch=""><center>???</center></td>
+        </tr>
+        <tr onclick="this.classList.toggle('clicked')">
+            <td data-ch=""><center>???</center></td>
+            <td data-ch=""><center>???</center></td>
+            <td data-ch=""><center>???</center></td>
+            <td data-ch=""><center>???</center></td>
+        </tr>
+        <tr onclick="this.classList.toggle('clicked')">
+            <td data-ch=""><center>???</center></td>
+            <td data-ch=""><center>???</center></td>
+            <td data-ch=""><center>???</center></td>
+            <td data-ch=""><center>???</center></td>
+        </tr>
+    </table>
+
+    <script>
+        let timer = 0;
+        let timerInterval = null;
+        let gameStarted = false; 
+        const cells = document.querySelectorAll('td');
+
+        document.getElementById("startBtn").addEventListener("click", () => {
+            gameStarted = true;
+            initGame();
+            startTimer();
+        });
+        // 원래 단어들 (짝 맞추기 위해 2개씩)
+        const words = ["거북이","고양이","오리","펭귄","사자","나비","나방","사슴"];
+        const pairs = [...words, ...words]; // 짝 맞추기 2개씩
+
+        shuffle(pairs);
+
+        console.log("pairs:", pairs.length, "cells:", cells.length);
+        console.log("words:", words);      // 여기에 8개 나와야 정상
+        console.log("pairs:", pairs);      // 여기에 16개 나와야 정상
+        console.log("cells:", cells.length);
+        
+        // Fisher-yates shuffle 알고리즘
+        function shuffle(array) {
+            for (let i = array.lenth = 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        // 섞고 나서 <td>에 배치
+        cells.forEach((cell, index) => {
+            cell.dataset.ch = pairs[index];
+            cell.innerHTML = `<center>???</center>`; // 초기화
+        });
+
+        function initGame() {
+            const cells = document.querySelectorAll("td");
+            shuffle(pairs);
+
+            cells.forEach((cell, i) => {
+                cell.dataset.ch = pairs[i];
+                cell.innerHTML = "<center>???</center>";
+                cell.className = "";
+
+            // 이벤트 등록 매번 새로!
+            cell.onclick = () => {
+                if (!gameStarted) return;
+
+                // 클릭하면 단어 보여주기
+                cell.innerHTML = `<center>${cell.dataset.ch}</center>`;
+            };
+        });
+    }
+        //시작 버튼 연결
+        document.getElementById("startBtn").addEventListener("click", () => {
+            initGame();
+            startTimer();
+        });
+
+        // 타이머 시작 함수
+        function startTimer() {
+            timer = 0;
+            document.getElementById("timer").textContext = timer;
+            timerInterval = setInterval(() => {
+                timer++;
+                document.getElementById("timer").textContent = timer;
+            }, 1000);
+        }
+        // 타이머 멈춤 함수
+        function stopTimer() {
+            clearInterval(timerterval);
+        }
+
+        const matched = document.querySelectorAll('.clicked');
+        if (matched.length === cells.length) {
+            stopTimer();
+            gameStarted = false; // 게임 종료로 클릭 막기
+            alert('🎉 게임 끝! 경과 시간: ${timer}초');
+        }
+    </script>
+    <script>
+
+        let isChecking = false; // 클릭 중인지 여부
+        let selectedCells = [];
+
+        cells.forEach(cell => {
+            cell.addEventListener("click", () => {
+
+                // 클릭 차단 조건
+                if (isChecking || cell.classList.contains("clicked") || cell.classList.contains("selected")) return;
+
+
+                const value = cell.dataset.ch;
+                cell.innerHTML = `<center>${value}</center>`;
+                // 셀 선택 표시
+                cell.classList.add("selected");
+                selectedCells.push(cell);
+
+                // 두 개 선택 시 판단
+                if (selectedCells.length === 2) {
+                    isChecking = true; // 클릭 중 상태로 변경
+
+                    const [first, second] = selectedCells;
+                    const firstVal = first.dataset.ch;
+                    const secondVal = second.dataset.ch;
+
+                    if (firstVal === secondVal) {
+                        // 짝이 맞았을 때 먼저 selected 제거, 그 다음 .clicked 추가
+                        setTimeout(() => {
+                            [first, second].forEach(cell => {
+                                cell.classList.remove("selected");
+                                cell.classList.add("clicked");
+                            })
+                            
+                            selectedCells = [];
+                            isChecking = false; // 클릭 중 상태 해제
+                        }, 400); // 0.4초 후 유지
+                    } else {
+                        // 짝 안 맞으면 원상 복귀
+                         setTimeout(() => {
+                            [first, second].forEach(cell => {
+                                cell.innerHTML = "<center>???</center>";
+                                cell.classList.remove("selected", "revealed");
+                            });
+                            selectedCells = [];
+                            isChecking = false; // 클릭 중 상태 해제
+                            console.log('isChecking 해제됨');
+                        }, 700); // 0.7초 후 원상 복귀
+        
+                    }
+            }
+            });
+        });
+    </script>
+</body>
+</html>

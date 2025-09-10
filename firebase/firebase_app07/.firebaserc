@@ -1,0 +1,22 @@
+{
+  "projects": {
+    "default": "jsproject-90f19"
+  },
+  "targets": {
+    "users7520": {
+      "hosting": {
+        "users7520": [
+          "users7520"
+        ]
+      }
+    },
+    "jsproject-90f19": {
+      "hosting": {
+        "users7520": [
+          "users7520"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

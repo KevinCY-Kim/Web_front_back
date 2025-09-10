@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome to Firebase Hosting</title>
+
+    <!-- Firebase SDK를 모듈 방식으로 불러오기 -->
+    <script type="module">
+      // Firebase 앱 초기화에 필요한 함수들을 불러옴
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+      // Firestore 관련 함수들 불러오기
+      import { getFirestore, collection, addDoc, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+      // Firebase 프로젝트 설정 정보 (자신의 Firebase 콘솔에서 확인)
+      const firebaseConfig = {
+        apiKey: "AIzaSyAP2sKGMh2E3CiOUgd5T09xxeKYnFVALBE",
+        authDomain: "jsproject-90f19.firebaseapp.com",
+        projectId: "jsproject-90f19",
+        storageBucket: "jsproject-90f19.firebasestorage.app",
+        messagingSenderId: "420841137529",
+        appId: "1:420841137529:web:08a28f4f46536038e73ba8",
+        measurementId: "G-7REG1Z41RR"
+      };
+
+      // Firebase 앱 초기화 (이후 다른 Firebase 서비스 사용 가능)
+      const app = initializeApp(firebaseConfig);
+
+      // Firestore 데이터베이스 인스턴스 생성
+      const db = getFirestore(app);
+
+      // DOM(HTML 문서)이 완전히 로드된 후 실행되는 이벤트 핸들러 등록
+      window.addEventListener('DOMContentLoaded', async () => {
+        // HTML에서 각 요소(id 기준) 가져오기
+        const form = document.getElementById('user-form'); // 폼
+        const inputFirst = document.getElementById('input-first'); // 이름 입력란
+        const inputLast = document.getElementById('input-last');   // 성 입력란
+        const inputBorn = document.getElementById('input-born');   // 출생년도 입력란
+        const usersBody = document.getElementById('users-data-body'); // 테이블 데이터 영역
+
+        // Firestore에서 유저 데이터 불러와서 테이블에 그리는 함수
+        async function drawlist() {
+          usersBody.innerHTML = ''; // 기존 테이블 데이터 초기화
+
+          // Firestore 'users' 컬렉션에서 born 필드 기준 내림차순으로 정렬 후 전체 문서 가져오기
+          const qSnap = await getDocs(query(collection(db, 'users'), orderBy('born', 'desc')));
+
+          // 각 문서(doc)를 순회하면서 테이블 행 추가
+          qSnap.forEach(doc => {
+            const user = doc.data(); // 문서 데이터 가져오기 (객체)
+            // 새 테이블 행(tr) 요소 생성
+            const row = document.createElement('tr');
+
+            // 테이블 행 내부에 셀(td) 내용 넣기
+            row.innerHTML = `
+              <td>${doc.id}</td>       <!-- 문서 아이디 -->
+              <td>${user.first}</td>    <!-- first 필드: 이름 -->
+              <td>${user.last}</td>     <!-- last 필드: 성 -->
+              <td>${user.born}</td>     <!-- born 필드: 출생년도 (숫자) -->
+            `;
+
+            // 완성된 행을 테이블 tbody에 붙임
+            usersBody.appendChild(row);
+          });
+        }
+
+        // 폼이 제출될 때 실행되는 이벤트 핸들러 등록
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault(); // 폼 제출 기본 동작(새로고침) 막기
+
+          // 입력값 가져와서 앞뒤 공백 제거
+          const first = inputFirst.value.trim();
+          const last = inputLast.value.trim();
+          const bornYear = parseInt(inputBorn.value, 10); // 문자열 → 정수 변환
+
+          // 입력값 검증: 비어있거나 bornYear가 숫자가 아니면 종료
+          if (!first || !last || isNaN(bornYear)) return;
+
+          // Firestore 'users' 컬렉션에 새 문서 추가
+          await addDoc(collection(db, 'users'), {
+            first,    // 이름
+            last,     // 성
+            born: bornYear  // 출생년도 숫자
+          });
+
+          // 입력창 초기화
+          inputFirst.value = '';
+          inputLast.value = '';
+          inputBorn.value = '';
+
+          // 테이블 다시 그리기 (새 데이터 반영)
+          drawlist();
+        });
+
+        // 페이지 처음 열렸을 때 테이블 초기 데이터 불러오기
+        drawlist();
+      });
+    </script>
+
+    <style>
+      /* 기본 스타일 */
+      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+      #message { background: white; max-width: 600px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
+      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
+      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
+      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
+      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
+      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
+      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
+      @media (max-width: 600px) {
+        body, #message { margin-top: 0; background: white; box-shadow: none; }
+        body { border-top: 16px solid #ffa100; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="message">
+      <h2>user7520</h2>
+      <h1>Firebase Hosting Setup Complete</h1>
+      <div>
+        <!-- 사용자 입력 폼 -->
+        <form id="user-form" style="margin-bottom:16px;">
+          <div style="margin-bottom:8px;">
+            <label for="input-first">First Name:</label><br>
+            <input type="text" id="input-first" required> <!-- 이름 -->
+          </div>
+          <div style="margin-bottom:8px;">
+            <label for="input-last">Last Name:</label><br>
+            <input type="text" id="input-last" required> <!-- 성 -->
+          </div>
+          <div style="margin-bottom:8px;">
+            <label for="input-born">Born Year:</label><br>
+            <input type="number" id="input-born" required> <!-- 출생년도 -->
+          </div>
+          <button type="submit">Add User</button> <!-- 제출 버튼 -->
+        </form>
+      </div>
+
+      <!-- 유저 목록 테이블 -->
+      <table id="users-table" border="1" style="width:100%; text-align:right; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th><center>ID</center></th>           <!-- 문서 ID -->
+            <th><center>First Name</center></th>  <!-- 이름 -->
+            <th><center>Last Name</center></th>   <!-- 성 -->
+            <th><center>Born Year</center></th>   <!-- 출생년도 -->
+          </tr>
+        </thead>
+        <tbody id="users-data-body">
+          <!-- 여기에 Firestore에서 읽어온 데이터가 행으로 추가됩니다 -->
+        </tbody>
+      </table>
+    </div>
+    <p id="load">Firebase SDK Loading&hellip;</p>
+  </body>
+</html>

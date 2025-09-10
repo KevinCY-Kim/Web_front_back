@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome to Firebase Hosting</title>
+
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/12.0.0/firebase-app-compat.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/12.0.0/firebase-auth-compat.js"></script>
+    <script defer src="/__/firebase/12.0.0/firebase-database-compat.js"></script>
+    <script defer src="/__/firebase/12.0.0/firebase-firestore-compat.js"></script>
+    <script defer src="/__/firebase/12.0.0/firebase-functions-compat.js"></script>
+    <script defer src="/__/firebase/12.0.0/firebase-messaging-compat.js"></script>
+    <script defer src="/__/firebase/12.0.0/firebase-storage-compat.js"></script>
+    <script defer src="/__/firebase/12.0.0/firebase-analytics-compat.js"></script>
+    <script defer src="/__/firebase/12.0.0/firebase-remote-config-compat.js"></script>
+    <script defer src="/__/firebase/12.0.0/firebase-performance-compat.js"></script>
+    <!-- 
+      initialize the SDK after all desired features are loaded, set useEmulator to false
+      to avoid connecting the SDK to running emulators.
+    -->
+      
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+
+    <style media="screen">
+      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+      #message { background: white; max-width: 600px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
+      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
+      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
+      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
+      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
+      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
+      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
+      @media (max-width: 600px) {
+        body, #message { margin-top: 0; background: white; box-shadow: none; }
+        body { border-top: 16px solid #ffa100; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="message">
+      <h2>Welcome</h2>
+      <h1>user login page</h1>
+      <form id=""newloginForm" action="">
+      first: <input type="text" name="first"><br>
+      last: <input type="text" name="last"><br>
+      born: <input type="text" name="born"><br>
+
+      <input type="submit" value="저장">
+    </form>
+    <div id="listBox">
+      <table border="1" width="100%">
+      <thead>
+        <th>first</th>
+        <th>last</th>
+        <th>born</th>
+        <th>createdAt</th>
+        <th>updatedAt</th>
+        <th>delete</th>
+      </thead>
+      </table>
+    </div>
+   </div>
+  <p id="load">Copyright (C) Kim, Chang-Yong</p>
+
+    <script>
+      // window.onload =
+      document.addEventListener('DOMContentLoaded', function() {
+        const loadEl = document.querySelector('#load');
+        const form = document.querySelector('#newloginForm');
+        const listBox = document.querySelector('#listBox table');
+
+        try {
+          let app = firebase.app();
+          let db  = firebase.firestore();
+          console.dir(db);        
+         
+          form.onsubmit = function(event) {
+            // form의 기본 기능은 페이지 전환
+            // 기본 기능을 일시중지 한다.
+            event.preventDefault();
+
+            var userRef = db.collection("user");
+              userRef.doc(form.users.value).set({
+                firt: form.first.value, 
+                last: form.last.value, 
+                born: form.born.value,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+              })
+                .then(() => {
+                  // Promise 문법.
+                  alert("저장완료!");
+                  drawList();
+                })
+          } // end of onsubmit ...
+
+          // 자바스크립트 함수 안에 다른 선언 가능.
+          function drawList() {
+            db.collection("cities").get().then((querySnapshot) => {
+                let html = "";
+                querySnapshot.forEach((doc) => {
+                    // doc.data() is never undefined for query doc snapshots
+                    //console.log(doc.id, " => ", doc.data());
+                    let user = doc.data();
+                    html += `<tr>
+                      <td>${users.first}</td>
+                      <td>${users.last}</td>
+                      <td>${users.born}</td>
+                      <td>${users.createdAt ? users.createdAt.toDate().toLocaleString() : ''}</td>
+                      <td>${users.updatedAt ? users.updatedAt.toDate().toLocaleString() :
+  ''}</td>
+                      <td><button onclick="db.collection('user').doc('${users.id}').delete()">삭제</b utton></td>
+                    </tr>`; 
+                });
+                citiesList.innerHTML = html;
+            });
+          }
+          drawList();
+        } catch (e) {
+          console.error(e);
+          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+        }
+      });
+    </script>
+ 
+    <script type="module">
+      </script>
+      <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics-compat.js"></script>
+    
+  <script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAP2sKGMh2E3CiOUgd5T09xxeKYnFVALBE",
+    authDomain: "jsproject-90f19.firebaseapp.com",
+    projectId: "jsproject-90f19",
+    storageBucket: "jsproject-90f19.firebasestorage.app",
+    messagingSenderId: "420841137529",
+    appId: "1:420841137529:web:2cbcd26ee2f15691e73ba8",
+    measurementId: "G-52JYC1LX3K"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = firebase.analytics(app);
+</script>
+  </body>
+</html>

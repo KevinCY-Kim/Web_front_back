@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>★ 짝 맞추기 게임 ★</title>
+    <style>
+        .clicked {
+            background-color: yellowgreen; /* 짝 맞을 떄 유지 */
+            }
+        .selected {
+            background-color: white; /* 임시 선택 상태 */
+                }
+        table { 
+            width: 400px;
+            height: 400px;
+        }
+        td {
+            width: 100px;
+            height: 100px;
+            border: 1px solid gray;
+            background-color: skyblue;
+        }
+    </style>
+</head>
+<body>
+    <h1>★ 짝 맞추기 게임 ★</h1>
+    <table>
+        <tr onclick="this.classList.toggle('clicked')">
+            <td data-ch="거북이"><center>???</center></td>
+            <td data-ch="고양이"><center>???</center></td>
+            <td data-ch="오리"><center>???</center></td>
+            <td data-ch="펭귄"><center>???</center></td>
+        </tr>
+        <tr onclick="this.classList.toggle('clicked')">
+            <td data-ch="펭귄"><center>???</center></td>
+            <td data-ch="나비"><center>???</center></td>
+            <td data-ch="오리"><center>???</center></td>
+            <td data-ch="기러기"><center>???</center></td>
+        </tr>
+        <tr onclick="this.classList.toggle('clicked')">
+            <td data-ch="고양이"><center>???</center></td>
+            <td data-ch="강아지"><center>???</center></td>
+            <td data-ch="나비"><center>???</center></td>
+            <td data-ch="기러기"><center>???</center></td>
+        </tr>
+        <tr onclick="this.classList.toggle('clicked')">
+            <td data-ch="강아지"><center>???</center></td>
+            <td data-ch="거북이"><center>???</center></td>
+            <td data-ch="나방"><center>???</center></td>
+            <td data-ch="나방"><center>???</center></td>
+        </tr>
+    </table>
+
+    <script>
+        const cells = document.querySelectorAll('td');
+        let isChecking = false; // 클릭 중인지 여부
+        let selectedCells = [];
+
+        cells.forEach(cell => {
+            cell.addEventListener("click", () => {
+
+                // 클릭 차단 조건
+                if (isChecking || cell.classList.contains("clicked") || cell.classList.contains("selected")) return;
+
+
+                const value = cell.dataset.ch;
+                cell.innerHTML = `<center>${value}</center>`;
+                // 셀 선택 표시
+                cell.classList.add("selected");
+                selectedCells.push(cell);
+
+                // 두 개 선택 시 판단
+                if (selectedCells.length === 2) {
+                    isChecking = true; // 클릭 중 상태로 변경
+
+                    const [first, second] = selectedCells;
+                    const firstVal = first.dataset.ch;
+                    const secondVal = second.dataset.ch;
+
+                    if (firstVal === secondVal) {
+                        // 짝이 맞았을 때 먼저 selected 제거, 그 다음 .clicked 추가
+                        setTimeout(() => {
+                            [first, second].forEach(cell => {
+                                cell.classList.remove("selected");
+                                cell.classList.add("clicked");
+                            })
+                            
+                            selectedCells = [];
+                            isChecking = false; // 클릭 중 상태 해제
+                        }, 400); // 0.4초 후 유지
+                    } else {
+                        // 짝 안 맞으면 원상 복귀
+                         setTimeout(() => {
+                            [first, second].forEach(cell => {
+                                cell.innerHTML = "<center>???</center>";
+                                cell.classList.remove("selected", "revealed");
+                            });
+                            selectedCells = [];
+                            isChecking = false; // 클릭 중 상태 해제
+                            console.log('isChecking 해제됨');
+                        }, 700); // 0.7초 후 원상 복귀
+        
+                    }
+            }
+            });
+        });
+    </script>
+</body>
+</html>
