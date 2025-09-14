@@ -1,17 +1,16 @@
-# proj01
+# firebase_app01
 
-Node.js 기초 및 정적 웹서버 실습 폴더입니다.
+Firebase Hosting 기본 실습 폴더입니다.
 
 ## 주요 파일 및 실습 주제
 
 | 파일/폴더명           | 주요 내용 및 실습 주제                |
 |----------------------|--------------------------------------|
-| app.js               | Node.js 웹서버 기본 예제             |
-| app_test01.js        | Node.js 테스트 예제                  |
-| profile.js           | 프로필 관련 예제                     |
+| firebase.json        | Firebase 프로젝트 설정 파일           |
 | public/index.html    | 메인 페이지, 정적 웹 배포 예제        |
 | public/home.html     | 홈 페이지 예제                        |
 | public/gallery.html  | 이미지 갤러리 예제                   |
 | public/profile.html  | 프로필 페이지 예제                   |
+| public/index20250728.html | 날짜별 실습 예제                  |
 
-Node.js로 정적 웹서버를 만들고, 다양한 정적 파일을 서비스하는 방법을 실습할 수 있습니다. 
+Firebase Hosting을 통한 정적 웹사이트 배포와 기본 예제를 실습할 수 있습니다.
